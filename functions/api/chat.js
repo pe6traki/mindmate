@@ -168,6 +168,13 @@ function buildContextSection(context) {
 export async function onRequestPost(context) {
   const { request, env } = context;
 
+  // ALLOWED_ORIGINS env var: comma-separated list of allowed origins
+  const allowedOrigins = env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(',') : [];
+  const origin = request.headers.get('Origin') || '';
+  if (origin && !allowedOrigins.includes(origin)) {
+    return new Response('Forbidden', { status: 403 });
+  }
+
   const apiKey = env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return jsonOut({ error: 'API ключът не е конфигуриран.' }, 500);
@@ -199,6 +206,13 @@ export async function onRequestPost(context) {
     .slice(-40);
 
   while (messages.length && messages[0].role === 'assistant') messages.shift();
+
+  if (isSummary) {
+    const last = messages[messages.length - 1];
+    if (last?.role === 'user' && last.content.startsWith('[SUMMARY_REQUEST]')) {
+      last.content = '[SUMMARY_REQUEST] Генерирай структуриран JSON резюме на тази сесия. Отговори САМО с валиден JSON обект, без markdown, без обяснения. Формат:\n{\n  "title": "кратко заглавие",\n  "coreBelief": "основното убеждение",\n  "initialIntensity": 0,\n  "finalIntensity": 0\n}';
+    }
+  }
 
   if (!messages.length) {
     return jsonOut({ error: 'Няма валидни съобщения.' }, 400);

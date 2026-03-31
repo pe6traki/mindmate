@@ -150,7 +150,7 @@ function buildContextSection(context) {
 
 function cors(origin) {
   return {
-    'Access-Control-Allow-Origin':  origin || '*',
+    'Access-Control-Allow-Origin':  origin,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
   };
@@ -158,7 +158,13 @@ function cors(origin) {
 
 export default {
   async fetch(request, env) {
-    const origin = request.headers.get('Origin') || '*';
+    const origin = request.headers.get('Origin') || '';
+    // ALLOWED_ORIGINS env var: comma-separated list of allowed origins
+    const allowedOrigins = env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(',') : [];
+
+    if (origin && !allowedOrigins.includes(origin)) {
+      return new Response('Forbidden', { status: 403 });
+    }
 
     // CORS preflight
     if (request.method === 'OPTIONS') {
@@ -198,6 +204,13 @@ export default {
       .slice(-40);
 
     while (messages.length && messages[0].role === 'assistant') messages.shift();
+
+    if (isSummary) {
+      const last = messages[messages.length - 1];
+      if (last?.role === 'user' && last.content.startsWith('[SUMMARY_REQUEST]')) {
+        last.content = '[SUMMARY_REQUEST] Генерирай структуриран JSON резюме на тази сесия. Отговори САМО с валиден JSON обект, без markdown, без обяснения. Формат:\n{\n  "title": "кратко заглавие",\n  "coreBelief": "основното убеждение",\n  "initialIntensity": 0,\n  "finalIntensity": 0\n}';
+      }
+    }
 
     if (!messages.length) {
       return Response.json({ error: 'Няма валидни съобщения.' }, { status: 400, headers: cors(origin) });
