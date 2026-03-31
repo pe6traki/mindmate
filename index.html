@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#4A7B7B">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="Пространство за изследване на тревогата. Частно. Спокойно.">
+  <title>Bastun MindMate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ── Header ─────────────────────────────────────────────────── -->
+  <header>
+    <button class="brand" id="btn-brand" aria-label="Към началната страница">
+      <div class="brand-mark">
+        <svg viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="17" cy="17" r="15" stroke="rgba(255,255,255,0.28)" stroke-width="1.5"/>
+          <circle cx="17" cy="17" r="9"  stroke="rgba(255,255,255,0.58)" stroke-width="1.5"/>
+          <circle cx="17" cy="17" r="3.5" fill="white"/>
+        </svg>
+      </div>
+      <span class="brand-name">Bastun <em>MindMate</em></span>
+    </button>
+    <div class="header-actions">
+      <button class="btn-icon" id="btn-load-header" title="Зареди предишни сесии" aria-label="Зареди предишни сесии">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+      </button>
+      <button class="btn-icon hidden" id="btn-download-header" title="Изтегли сесията" aria-label="Изтегли сесията">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Welcome Screen ────────────────────────────────────────── -->
+  <div id="welcome">
+    <div class="welcome-inner">
+
+      <div class="welcome-mark">
+        <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="36" cy="36" r="32" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
+          <circle cx="36" cy="36" r="21" stroke="rgba(255,255,255,0.45)" stroke-width="1.5"/>
+          <circle cx="36" cy="36" r="10" stroke="rgba(255,255,255,0.7)"  stroke-width="1.5"/>
+          <circle cx="36" cy="36" r="4"  fill="white"/>
+        </svg>
+      </div>
+      <h1>Bastun <em>MindMate</em></h1>
+      <p class="welcome-sub">Пространство за изследване на тревогата.<br>Частно. Спокойно. Без осъждане.</p>
+
+      <div id="context-badge" class="context-badge hidden">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span id="context-count">0</span>&nbsp;сесии заредени
+      </div>
+
+      <button class="btn-primary" id="btn-new-session">
+        Започни сесия
+      </button>
+
+      <div class="divider">или</div>
+
+      <label for="file-input-welcome" class="btn-secondary" role="button" tabindex="0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Зареди предишни сесии
+      </label>
+      <input type="file" id="file-input-welcome" accept=".json" aria-label="Избери файл със сесии" style="display:none">
+
+      <p class="disclaimer">
+        Не е заместител на професионална терапия.<br>
+        При кризисна ситуация потърси специалист.
+      </p>
+    </div>
+  </div>
+
+  <!-- ── Chat Area ─────────────────────────────────────────────── -->
+  <main id="chat" class="hidden" role="log" aria-live="polite" aria-label="Разговор">
+    <div id="messages"></div>
+    <div id="typing" class="typing-indicator hidden" aria-label="Пише...">
+      <div class="typing-bubble">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── Input Bar ─────────────────────────────────────────────── -->
+  <div id="input-bar" class="hidden">
+    <div class="input-wrapper">
+      <textarea
+        id="user-input"
+        placeholder="Напиши нещо..."
+        rows="1"
+        autocomplete="off"
+        autocorrect="on"
+        spellcheck="true"
+        aria-label="Твоето съобщение"
+      ></textarea>
+      <button id="btn-send" class="send-btn" aria-label="Изпрати">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </div>
+    <div id="session-footer" class="session-footer hidden">
+      <button id="btn-new-session-chat" class="btn-session-action btn-session-new">
+        Нова сесия
+      </button>
+      <button id="btn-end-session" class="btn-session-action btn-session-end">
+        Приключи
+      </button>
+    </div>
+  </div>
+
+  <input type="file" id="file-input-header" accept=".json" aria-hidden="true" style="display:none">
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

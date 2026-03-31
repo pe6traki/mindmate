@@ -1,0 +1,8 @@
+# Never commit the API key
+.env
+config.php
+*.local
+
+# OS files
+.DS_Store
+Thumbs.db
